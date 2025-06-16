@@ -10,19 +10,15 @@ export const useTypingEffect = (texts: string[], speed: number = 2000): string =
 
   useEffect(() => {
     const text = texts[currentTextIndex];
-    
     const timer = setTimeout(() => {
       if (!isDeleting) {
-        // Typing
         if (charIndex < text.length) {
           setCurrentText(text.substring(0, charIndex + 1));
           setCharIndex(charIndex + 1);
         } else {
-          // Pause before deleting
           setTimeout(() => setIsDeleting(true), speed);
         }
       } else {
-        // Deleting
         if (charIndex > 0) {
           setCurrentText(text.substring(0, charIndex - 1));
           setCharIndex(charIndex - 1);

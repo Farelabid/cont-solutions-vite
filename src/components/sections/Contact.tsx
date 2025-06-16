@@ -154,7 +154,7 @@ const Contact: React.FC = () => {
           ease: "power2.out",
           scrollTrigger: {
             trigger: '.contact-info',
-            start: 'top 80%'
+            start: 'top 90%'
           }
         }
       );
@@ -170,7 +170,7 @@ const Contact: React.FC = () => {
           ease: "power2.out",
           scrollTrigger: {
             trigger: '.contact-form',
-            start: 'top 80%'
+            start: 'top 90%'
           }
         }
       );

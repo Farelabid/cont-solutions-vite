@@ -1,162 +1,215 @@
-// src/components/sections/Services.tsx - Fixed All Issues
+// src/components/sections/Services.tsx - Simple GSAP Only
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { 
   Code, 
-  Smartphone, 
-  Globe, 
-  Database, 
-  Cpu, 
   Palette, 
-  Camera, 
+  Filter, 
+  ChevronRight, 
+  Sparkles, 
+  X,
+  Users,
+  Globe,
+  Smartphone,
+  Database,
+  Wifi,
+  Brain,
+  Camera,
+  Share2,
   Video,
-  Filter,
-  ChevronRight,
-  Sparkles,
-  Zap,
-  X
+  Target
 } from 'lucide-react';
-import { useScrollAnimation } from '../../hooks/useScrollAnimation';
-import { services } from '../../data';
 import type { Service } from '../../types';
 
 gsap.registerPlugin(ScrollTrigger);
 
+// Services data
+const services: Service[] = [
+  // IT Solutions
+  { id: 'it-manpower', title: 'IT Manpower Sharing', description: 'Providing skilled IT professionals to supplement your team and ensure project success.', icon: '👥', category: 'it' },
+  { id: 'product-dev', title: 'Product Development', description: 'Offering comprehensive product development services, from concept to launch, tailored to your business needs.', icon: '🚀', category: 'it' },
+  { id: 'web-dev', title: 'Website Development', description: 'Building responsive, user-friendly, and engaging websites to enhance your online presence.', icon: '🌐', category: 'it' },
+  { id: 'app-dev', title: 'Application Development', description: 'Developing custom software applications designed to solve your unique business challenges.', icon: '💻', category: 'it' },
+  { id: 'mobile-dev', title: 'Mobile App Development', description: 'Creating high-performance, cross-platform mobile apps for iOS and Android.', icon: '📱', category: 'it' },
+  { id: 'iot-dev', title: 'IoT Development', description: 'Innovating and connecting your devices through seamless IoT solutions for smarter operations.', icon: '🔗', category: 'it' },
+  { id: 'data-analysis', title: 'Data Analysis', description: 'Turning raw data into actionable insights through advanced data analysis techniques.', icon: '📊', category: 'it' },
+  { id: 'network-install', title: 'Network Installation', description: 'Designing and implementing robust, secure network infrastructures for your business.', icon: '🔧', category: 'it' },
+  { id: 'ai-dev', title: 'AI Development', description: 'Integrating AI technologies to automate tasks and improve business efficiency.', icon: '🤖', category: 'it' },
+  { id: 'ui-ux', title: 'UI/UX Design', description: 'Designing intuitive user interfaces and creating seamless user experiences.', icon: '🎨', category: 'it' },
+  // Creative Studio
+  { id: 'logo-design', title: 'Logo Design', description: 'Creating unique and memorable logos that define your brand identity and make lasting impressions.', icon: '🎯', category: 'creative' },
+  { id: 'social-media', title: 'Social Media Management', description: 'Managing your social media presence to engage and grow your audience across all platforms.', icon: '📱', category: 'creative' },
+  { id: 'photo-production', title: 'Photo Production', description: 'Professional photography services to showcase your products or services in the best light.', icon: '📸', category: 'creative' },
+  { id: 'video-ads', title: 'Video Ads Production', description: 'Creating compelling video advertisements that capture attention and drive conversions.', icon: '🎬', category: 'creative' }
+];
+
+type FilterType = 'all' | 'it' | 'creative';
+
+interface ServiceCardProps {
+  service: Service;
+  index: number;
+  onClick: (service: Service) => void;
+}
+
 const Services: React.FC = () => {
-  const sectionRef = useScrollAnimation();
-  const [activeFilter, setActiveFilter] = useState<'all' | 'it' | 'creative'>('all');
-  const [hoveredService, setHoveredService] = useState<string | null>(null);
+  const [activeFilter, setActiveFilter] = useState<FilterType>('all');
   const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
   const servicesGridRef = useRef<HTMLDivElement>(null);
 
-  // Icon mapping for each service
-  const serviceIcons: { [key: string]: React.ElementType } = {
-    'it-manpower': Code,
-    'product-dev': Zap,
+  // Service icons mapping
+  const serviceIcons: Record<string, React.ComponentType<{ className?: string }>> = {
+    'it-manpower': Users,
+    'product-dev': Target,
     'web-dev': Globe,
-    'app-dev': Smartphone,
+    'app-dev': Code,
     'mobile-dev': Smartphone,
-    'iot-dev': Cpu,
+    'iot-dev': Wifi,
     'data-analysis': Database,
-    'network-install': Globe,
-    'ai-dev': Cpu,
+    'network-install': Wifi,
+    'ai-dev': Brain,
     'ui-ux': Palette,
-    'logo-design': Palette,
-    'social-media': Smartphone,
+    'logo-design': Target,
+    'social-media': Share2,
     'photo-production': Camera,
     'video-ads': Video
   };
 
-  // Filter services based on active filter
-  const filteredServices = services.filter(service => 
-    activeFilter === 'all' || service.category === activeFilter
-  );
+  // Filtered services
+  const filteredServices = services.filter(service => {
+    if (activeFilter === 'all') return true;
+    return service.category === activeFilter;
+  });
 
-  // Fixed filter animation - no layout jump
-  const animateFilter = (newFilter: 'all' | 'it' | 'creative') => {
+  // 🎯 SIMPLE GSAP Animation for filter change
+  const animateFilter = (newFilter: FilterType): void => {
     if (newFilter === activeFilter) return;
-    
-    // Immediate filter change to prevent layout jump
-    setActiveFilter(newFilter);
-    
-    // Simple fade animation
-    gsap.fromTo('.service-card', 
-      { opacity: 0, y: 20 },
-      { opacity: 1, y: 0, duration: 0.4, stagger: 0.05, ease: "power2.out" }
-    );
-  };
 
-  // Simple hover effects
-  const handleServiceHover = (serviceId: string) => {
-    setHoveredService(serviceId);
-  };
-
-  const handleServiceLeave = (serviceId: string) => {
-    setHoveredService(null);
-  };
-
-  // Initial animations
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo('.service-card',
-        { opacity: 0, y: 30 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.6,
-          stagger: 0.1,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: '.services-grid',
-            start: 'top 80%'
+    // Simple fade out
+    gsap.to('.service-card', {
+      opacity: 0,
+      duration: 0.3,
+      ease: "power2.out",
+      onComplete: () => {
+        setActiveFilter(newFilter);
+        
+        // Simple fade in
+        gsap.fromTo('.service-card', 
+          { opacity: 0 },
+          { 
+            opacity: 1, 
+            duration: 0.4,
+            stagger: 0.1,
+            ease: "power2.out"
           }
-        }
-      );
+        );
+      }
     });
+  };
 
-    return () => ctx.revert();
-  }, []);
+  // Modal functions
+  const openServiceModal = (service: Service): void => {
+    setSelectedService(service);
+    document.body.style.overflow = 'hidden';
+  };
 
-  const ServiceCard: React.FC<{ service: Service; index: number }> = ({ service, index }) => {
-    const IconComponent = serviceIcons[service.id] || Code;
+  const closeServiceModal = (): void => {
+    setSelectedService(null);
+    document.body.style.overflow = 'auto';
+  };
+
+  // 🎯 SIMPLE Service card component - GSAP only
+  const ServiceCard: React.FC<ServiceCardProps> = ({ service, index, onClick }) => {
+    const cardRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+      const card = cardRef.current;
+      if (!card) return;
+
+      // Simple GSAP scroll animation
+      const ctx = gsap.context(() => {
+        gsap.fromTo(card,
+          { 
+            opacity: 0, 
+            y: 20 
+          },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.4,
+            delay: index * 0.1,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: card,
+              start: 'top 95%',
+              toggleActions: 'play none none reverse'
+            }
+          }
+        );
+
+        // Simple hover animation
+        card.addEventListener('mouseenter', () => {
+          gsap.to(card, { 
+            y: -8, 
+            duration: 0.3, 
+            ease: "power2.out" 
+          });
+        });
+
+        card.addEventListener('mouseleave', () => {
+          gsap.to(card, { 
+            y: 0, 
+            duration: 0.3, 
+            ease: "power2.out" 
+          });
+        });
+      });
+
+      return () => ctx.revert();
+    }, [index]);
+
     const isCreative = service.category === 'creative';
-    
+    const IconComponent = serviceIcons[service.id] || Code;
+
     return (
       <div
-        data-service={service.id}
-        className={`service-card group relative bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer border border-gray-100 ${
-          hoveredService === service.id ? 'transform -translate-y-2 scale-105' : ''
-        }`}
-        onMouseEnter={() => handleServiceHover(service.id)}
-        onMouseLeave={() => handleServiceLeave(service.id)}
-        onClick={() => setSelectedService(service)}
+        ref={cardRef}
+        onClick={() => onClick(service)}
+        className={`
+          service-card bg-white rounded-2xl p-8 shadow-lg cursor-pointer
+          ${isCreative ? 'border-l-4 border-yellow-400' : 'border border-gray-100'}
+        `}
       >
-        {/* Background gradient overlay */}
         <div className={`
-          absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-3xl
+          w-16 h-16 rounded-2xl flex items-center justify-center mb-6
           ${isCreative 
-            ? 'bg-gradient-to-br from-yellow-50 to-orange-50' 
-            : 'bg-gradient-to-br from-teal-50 to-blue-50'
+            ? 'bg-gradient-to-br from-yellow-400 to-orange-500' 
+            : 'bg-gradient-to-br from-teal-400 to-blue-900'
           }
-        `}></div>
+        `}>
+          <IconComponent className="w-8 h-8 text-white" />
+        </div>
+        
+        <h3 className="text-xl font-bold text-gray-900 mb-4">
+          {service.title}
+        </h3>
+        
+        <p className="text-gray-600 leading-relaxed mb-4">
+          {service.description}
+        </p>
 
-        <div className="relative z-10">
-          {/* Icon */}
-          <div className={`
-            w-16 h-16 rounded-2xl flex items-center justify-center mb-6 text-white group-hover:scale-110 transition-transform duration-300
+        <div className="mt-6">
+          <span className={`
+            inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold
             ${isCreative 
-              ? 'bg-gradient-to-br from-yellow-500 to-orange-600' 
-              : 'bg-gradient-to-br from-teal-500 to-blue-600'
+              ? 'bg-yellow-100 text-yellow-700' 
+              : 'bg-teal-100 text-teal-700'
             }
           `}>
-            <IconComponent className="w-8 h-8" />
-          </div>
-
-          {/* Service Info */}
-          <h3 className="text-xl font-bold text-gray-900 mb-4 group-hover:text-teal-600 transition-colors duration-300">
-            {service.title}
-          </h3>
-
-          <p className="text-gray-600 leading-relaxed mb-6">
-            {service.description}
-          </p>
-
-          {/* Category Badge */}
-          <div className="flex items-center justify-between">
-            <span className={`
-              px-3 py-1 text-xs font-semibold rounded-full
-              ${isCreative 
-                ? 'bg-yellow-100 text-yellow-700' 
-                : 'bg-teal-100 text-teal-700'
-              }
-            `}>
-              {isCreative ? 'Creative Studio' : 'IT Solutions'}
-            </span>
-
-            <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-teal-600 transition-colors duration-300" />
-          </div>
+            {isCreative ? 'Creative Studio' : 'IT Solutions'}
+          </span>
         </div>
       </div>
     );
@@ -206,9 +259,10 @@ const Services: React.FC = () => {
                   key={filter.id}
                   onClick={() => animateFilter(filter.id)}
                   className={`
-                    relative px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center space-x-2
+                    relative px-6 py-3 rounded-xl font-semibold flex items-center space-x-2
+                    transition-all duration-300
                     ${activeFilter === filter.id
-                      ? 'bg-white text-gray-900 shadow-lg transform scale-105'
+                      ? 'bg-white text-gray-900 shadow-lg'
                       : 'text-gray-600 hover:text-gray-900'
                     }
                   `}
@@ -221,17 +275,18 @@ const Services: React.FC = () => {
           </div>
         </div>
 
-        {/* Services Grid - Fixed height to prevent layout jump */}
+        {/* Services Grid */}
         <div 
           ref={servicesGridRef}
           className="services-grid grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-16"
-          style={{ minHeight: '600px' }}
+          style={{ minHeight: '500px' }}
         >
           {filteredServices.map((service, index) => (
             <ServiceCard 
-              key={service.id} 
+              key={`${service.id}-${activeFilter}`}
               service={service} 
               index={index}
+              onClick={openServiceModal}
             />
           ))}
         </div>
@@ -286,27 +341,27 @@ const Services: React.FC = () => {
         </div>
       </div>
 
-      {/* Fixed Modal - Perfect Center on Screen */}
+      {/* Simple Modal */}
       {selectedService && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
-          onClick={() => setSelectedService(null)}
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+          onClick={closeServiceModal}
         >
           <div 
-            className="bg-white rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-y-auto relative"
-            onClick={e => e.stopPropagation()}
+            className="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
           >
-            {/* Header */}
-            <div className="flex justify-between items-center p-8 pb-6 border-b border-gray-100">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-8 border-b border-gray-200">
               <div className="flex items-center space-x-4">
                 <div className={`
-                  w-16 h-16 rounded-2xl flex items-center justify-center text-white
+                  w-16 h-16 rounded-2xl flex items-center justify-center
                   ${selectedService.category === 'creative' 
                     ? 'bg-gradient-to-br from-yellow-500 to-orange-600' 
                     : 'bg-gradient-to-br from-teal-500 to-blue-600'
                   }
                 `}>
-                  {React.createElement(serviceIcons[selectedService.id] || Code, { className: "w-8 h-8" })}
+                  {React.createElement(serviceIcons[selectedService.id] || Code, { className: "w-8 h-8 text-white" })}
                 </div>
                 <div>
                   <h3 className="text-2xl font-bold text-gray-900">
@@ -318,15 +373,15 @@ const Services: React.FC = () => {
                 </div>
               </div>
               <button
-                onClick={() => setSelectedService(null)}
-                className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200"
+                onClick={closeServiceModal}
+                className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 w-10 h-10 rounded-full flex items-center justify-center transition-colors"
               >
                 <X className="w-6 h-6" />
               </button>
             </div>
 
-            {/* Content */}
-            <div className="p-8 pt-6">
+            {/* Modal Content */}
+            <div className="p-8">
               <div className="space-y-6">
                 <p className="text-gray-600 leading-relaxed text-lg">
                   {selectedService.description}
@@ -362,17 +417,16 @@ const Services: React.FC = () => {
                   </p>
                 </div>
 
-                {/* CTA Buttons */}
-                <div className="flex space-x-4 pt-4">
+                <div className="flex flex-col sm:flex-row gap-4 pt-4">
                   <button 
-                    onClick={() => setSelectedService(null)}
-                    className="flex-1 px-6 py-3 bg-gradient-to-r from-teal-500 to-blue-600 text-white font-semibold rounded-xl hover:from-teal-600 hover:to-blue-700 transition-all duration-300"
+                    onClick={closeServiceModal}
+                    className="flex-1 bg-gradient-to-r from-teal-500 to-blue-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-teal-600 hover:to-blue-700 transition-all"
                   >
-                    Get Quote
+                    Get Started
                   </button>
                   <button 
-                    onClick={() => setSelectedService(null)}
-                    className="px-6 py-3 border border-gray-300 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 transition-all duration-300"
+                    onClick={closeServiceModal}
+                    className="flex-1 border border-gray-300 text-gray-700 px-6 py-3 rounded-xl font-semibold hover:bg-gray-50 transition-colors"
                   >
                     Learn More
                   </button>

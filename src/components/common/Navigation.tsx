@@ -1,8 +1,18 @@
-// src/components/common/Navigation.tsx - Fixed Hover Underline Position
+// src/components/common/Navigation.tsx - Corrected for Vite + React + TypeScript
 
 import React, { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
 import { gsap } from 'gsap';
+import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
+
+// Register GSAP plugins
+gsap.registerPlugin(ScrollToPlugin);
+
+interface NavLink {
+  id: string;
+  label: string;
+  icon: string;
+}
 
 const Navigation: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -44,12 +54,25 @@ const Navigation: React.FC = () => {
     setIsMobileMenuOpen(false);
   };
 
-  // Safe Cont Solutions Logo Component
-  const ContSolutionsLogo = () => (
+  // Contsol Logo Component using PNG
+  const ContsolLogo: React.FC = () => (
     <div className="flex items-center space-x-3 group cursor-pointer">
       <div className="relative">
+        <img 
+          src="/assets/logo-contsol.png"
+          alt="Contsol Logo"
+          className="w-12 h-12 transform group-hover:scale-110 transition-all duration-300"
+          onError={(e) => {
+            // Fallback to SVG if PNG not found
+            const target = e.target as HTMLImageElement;
+            target.style.display = 'none';
+            target.nextElementSibling?.classList.remove('hidden');
+          }}
+        />
+        
+        {/* Fallback SVG Logo */}
         <svg 
-          className="w-12 h-12 transform group-hover:scale-110 transition-all duration-300" 
+          className="w-12 h-12 transform group-hover:scale-110 transition-all duration-300 hidden" 
           viewBox="0 0 100 100" 
           xmlns="http://www.w3.org/2000/svg"
         >
@@ -79,7 +102,7 @@ const Navigation: React.FC = () => {
             x="50" 
             y="58" 
             textAnchor="middle" 
-            fontSize="20" 
+            fontSize="18" 
             fontWeight="bold" 
             fill="white"
           >
@@ -100,16 +123,16 @@ const Navigation: React.FC = () => {
       
       <div className="flex flex-col">
         <span className="text-xl font-bold text-gray-800 group-hover:text-teal-600 transition-colors duration-300">
-          Cont Solutions
+          Contsol
         </span>
         <span className="text-xs text-gray-500 group-hover:text-teal-500 transition-colors duration-300 -mt-1">
-          Continuous Development
+          Continuous Solutions
         </span>
       </div>
     </div>
   );
 
-  const navLinks = [
+  const navLinks: NavLink[] = [
     { id: 'home', label: 'Home', icon: '🏠' },
     { id: 'about', label: 'About', icon: '📖' },
     { id: 'services', label: 'Services', icon: '⚡' },
@@ -130,7 +153,7 @@ const Navigation: React.FC = () => {
           <div className="flex justify-between items-center">
             {/* Logo */}
             <div onClick={() => scrollToSection('home')}>
-              <ContSolutionsLogo />
+              <ContsolLogo />
             </div>
 
             {/* Desktop Navigation */}
@@ -142,78 +165,78 @@ const Navigation: React.FC = () => {
                   className={`
                     relative px-4 py-2 rounded-full font-medium transition-all duration-300 group
                     ${activeSection === link.id 
-                      ? 'text-white bg-gradient-to-r from-teal-500 to-blue-600 shadow-lg' 
-                      : 'text-gray-700 hover:text-teal-600 hover:bg-teal-50'
+                      ? 'text-teal-600 bg-teal-50' 
+                      : 'text-gray-600 hover:text-teal-600 hover:bg-teal-50'
                     }
                   `}
                 >
-                  <span className="flex items-center space-x-2">
+                  <span className="relative z-10 flex items-center space-x-1">
                     <span className="text-sm">{link.icon}</span>
                     <span>{link.label}</span>
                   </span>
                   
-                  {/* Fixed Animated underline - proper positioning */}
-                  {activeSection !== link.id && (
-                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-teal-500 to-blue-600 group-hover:w-3/4 transition-all duration-300"></div>
+                  {/* Active indicator */}
+                  {activeSection === link.id && (
+                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-6 h-0.5 bg-teal-600 rounded-full"></div>
                   )}
                 </button>
               ))}
             </div>
 
-            {/* Desktop CTA */}
-            <div className="hidden lg:flex items-center space-x-4">
-              <button 
+            {/* CTA Button */}
+            <div className="hidden lg:block">
+              <button
                 onClick={() => scrollToSection('contact')}
-                className="px-6 py-2 bg-gradient-to-r from-teal-500 to-blue-600 text-white font-semibold rounded-full hover:from-teal-600 hover:to-blue-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+                className="relative group px-6 py-3 bg-gradient-to-r from-teal-500 to-blue-600 text-white font-semibold rounded-full overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-xl"
               >
-                Get Started
+                <span className="relative z-10">Get Started</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-teal-600 to-blue-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </button>
             </div>
 
             {/* Mobile Menu Button */}
             <button
-              className="lg:hidden p-2 rounded-lg text-gray-700 hover:text-teal-600 hover:bg-teal-50 transition-all duration-200"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="lg:hidden w-10 h-10 rounded-full bg-teal-50 text-teal-600 flex items-center justify-center hover:bg-teal-100 transition-colors duration-300"
             >
-              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
 
-        {/* Mobile Navigation */}
-        <div className={`
-          lg:hidden transition-all duration-300 ease-out overflow-hidden
-          ${isMobileMenuOpen 
-            ? 'max-h-96 opacity-100' 
-            : 'max-h-0 opacity-0'
-          }
-        `}>
-          <div className="bg-white/95 backdrop-blur-xl border-t border-gray-200 px-4 py-4">
-            <div className="space-y-2">
-              {navLinks.map((link, index) => (
-                <button
-                  key={link.id}
-                  onClick={() => scrollToSection(link.id)}
-                  className={`
-                    w-full text-left px-4 py-3 rounded-xl font-medium transition-all duration-200
-                    ${activeSection === link.id 
-                      ? 'text-white bg-gradient-to-r from-teal-500 to-blue-600' 
-                      : 'text-gray-700 hover:text-teal-600 hover:bg-teal-50'
-                    }
-                  `}
-                  style={{ 
-                    animationDelay: `${index * 50}ms`
-                  }}
-                >
-                  <span className="flex items-center space-x-3">
+        {/* Mobile Menu */}
+        {isMobileMenuOpen && (
+          <div className="lg:hidden absolute top-full left-0 w-full bg-white/95 backdrop-blur-xl border-t border-gray-200 shadow-xl">
+            <div className="max-w-7xl mx-auto px-4 py-6">
+              <div className="grid gap-4">
+                {navLinks.map((link) => (
+                  <button
+                    key={link.id}
+                    onClick={() => scrollToSection(link.id)}
+                    className={`
+                      flex items-center space-x-3 w-full text-left px-4 py-3 rounded-xl font-medium transition-all duration-300
+                      ${activeSection === link.id 
+                        ? 'text-teal-600 bg-teal-50' 
+                        : 'text-gray-600 hover:text-teal-600 hover:bg-teal-50'
+                      }
+                    `}
+                  >
                     <span className="text-lg">{link.icon}</span>
                     <span>{link.label}</span>
-                  </span>
+                  </button>
+                ))}
+                
+                {/* Mobile CTA */}
+                <button
+                  onClick={() => scrollToSection('contact')}
+                  className="mt-4 w-full px-6 py-3 bg-gradient-to-r from-teal-500 to-blue-600 text-white font-semibold rounded-xl hover:from-teal-600 hover:to-blue-700 transition-all duration-300"
+                >
+                  Get Started
                 </button>
-              ))}
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </nav>
     </>
   );

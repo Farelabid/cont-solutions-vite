@@ -270,7 +270,8 @@ const Hero: React.FC = () => {
         <div className="w-2 h-2 bg-yellow-400 rounded-full opacity-80"></div>
       </div>
 
-      <style jsx>{`
+      <style>
+        {`
         @keyframes float-slow {
           0%, 100% { transform: translateY(0px) rotate(0deg); }
           50% { transform: translateY(-20px) rotate(180deg); }
@@ -286,7 +287,8 @@ const Hero: React.FC = () => {
         .animate-float-slow { animation: float-slow 6s ease-in-out infinite; }
         .animate-float-medium { animation: float-medium 4s ease-in-out infinite; }
         .animate-float-fast { animation: float-fast 3s ease-in-out infinite; }
-      `}</style>
+        `}
+      </style>
     </section>
   );
 };

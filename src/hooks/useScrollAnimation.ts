@@ -1,6 +1,6 @@
-// src/hooks/useScrollAnimation.ts - Complete Hook Implementation
+// src/hooks/useScrollAnimation.ts
 
-import { useRef, useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -13,38 +13,30 @@ export const useScrollAnimation = () => {
     const element = ref.current;
     if (!element) return;
 
-    // Create scroll trigger animation
-    const ctx = gsap.context(() => {
-      gsap.fromTo(element,
-        {
-          opacity: 0,
-          y: 50
+    gsap.fromTo(
+      element,
+      { opacity: 0, y: 50 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 1,
+        scrollTrigger: {
+          trigger: element,
+          start: 'top 80%',
+          end: 'bottom 20%',
+          toggleActions: 'play none none reverse',
         },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 1,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: element,
-            start: "top 85%",
-            end: "bottom 15%",
-            toggleActions: "play none none reverse"
-          }
-        }
-      );
-    }, element);
+      }
+    );
 
-    // Cleanup function
     return () => {
-      ctx.revert();
+      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
     };
   }, []);
 
   return ref;
 };
 
-// Counter Animation Hook
 export const useCounterAnimation = (target: number, duration: number = 2000) => {
   const [count, setCount] = useState(0);
   const ref = useRef<HTMLSpanElement>(null);
@@ -53,25 +45,23 @@ export const useCounterAnimation = (target: number, duration: number = 2000) => 
     const element = ref.current;
     if (!element) return;
 
-    const ctx = gsap.context(() => {
-      ScrollTrigger.create({
-        trigger: element,
-        start: 'top 80%',
-        onEnter: () => {
-          gsap.to({ count: 0 }, {
-            count: target,
-            duration: duration / 1000,
-            ease: 'power2.out',
-            onUpdate: function() {
-              setCount(Math.floor(this.targets()[0].count));
-            }
-          });
-        }
-      });
-    }, element);
+    ScrollTrigger.create({
+      trigger: element,
+      start: 'top 80%',
+      onEnter: () => {
+        gsap.to({ count: 0 }, {
+          count: target,
+          duration: duration / 1000,
+          ease: 'power2.out',
+          onUpdate: function() {
+            setCount(Math.floor(this.targets()[0].count));
+          }
+        });
+      }
+    });
 
     return () => {
-      ctx.revert();
+      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
     };
   }, [target, duration]);
 

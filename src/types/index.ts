@@ -16,6 +16,7 @@ export interface TeamMember {
   role: string;
   avatar?: string;
   initials: string;
+  category?: string;
 }
 
 export interface ContactInfo {

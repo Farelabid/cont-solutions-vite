@@ -1,4 +1,4 @@
-// src/components/common/Button.tsx
+// src/components/common/Button.tsx - Reusable Button Component
 
 import React from 'react';
 import type { ButtonProps } from '../../types';
@@ -8,34 +8,23 @@ const Button: React.FC<ButtonProps> = ({
   children, 
   onClick, 
   href, 
-  type = 'button',
+  type = 'button', 
   className = '' 
 }) => {
-  const baseClasses = `
-    inline-block px-8 py-3 rounded-full font-semibold text-center
-    transition-all duration-300 ease-in-out transform hover:-translate-y-1
-    cursor-pointer border-none outline-none focus:outline-none
-  `;
-
+  const baseClasses = "inline-flex items-center justify-center px-6 py-3 font-semibold rounded-full transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2";
+  
   const variantClasses = {
-    primary: `
-      bg-yellow-400 text-gray-800 hover:bg-yellow-500
-      shadow-lg hover:shadow-xl
-    `,
-    secondary: `
-      bg-transparent text-white border-2 border-white
-      hover:bg-white hover:text-teal-500
-      shadow-lg hover:shadow-xl
-    `
+    primary: "bg-gradient-to-r from-teal-500 to-blue-600 text-white hover:from-teal-600 hover:to-blue-700 shadow-lg hover:shadow-xl focus:ring-teal-500",
+    secondary: "bg-white text-gray-900 border-2 border-white hover:bg-gray-100 shadow-lg hover:shadow-xl focus:ring-gray-500"
   };
 
-  const combinedClasses = `${baseClasses} ${variantClasses[variant]} ${className}`;
+  const finalClasses = `${baseClasses} ${variantClasses[variant]} ${className}`;
 
   if (href) {
     return (
       <a 
         href={href} 
-        className={combinedClasses}
+        className={finalClasses}
         onClick={onClick}
       >
         {children}
@@ -45,8 +34,8 @@ const Button: React.FC<ButtonProps> = ({
 
   return (
     <button 
-      type={type}
-      className={combinedClasses}
+      type={type} 
+      className={finalClasses}
       onClick={onClick}
     >
       {children}

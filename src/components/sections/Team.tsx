@@ -1,4 +1,4 @@
-// src/components/sections/Team.tsx - Advanced Interactive Team
+// src/components/sections/Team.tsx - Simple & Reliable Modal
 
 import React, { useState, useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
@@ -15,7 +15,8 @@ import {
   Heart,
   Sparkles,
   Users,
-  Camera
+  Camera,
+  X
 } from 'lucide-react';
 import { useScrollAnimation } from '../../hooks/useScrollAnimation';
 import { teamMembers } from '../../data';
@@ -27,9 +28,10 @@ const Team: React.FC = () => {
   const sectionRef = useScrollAnimation();
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
   const [hoveredMember, setHoveredMember] = useState<string | null>(null);
+  const [imageErrors, setImageErrors] = useState<{ [key: string]: boolean }>({});
   const teamGridRef = useRef<HTMLDivElement>(null);
 
-  // Team member additional info (simulated)
+  // Enhanced team member details with photo paths
   const memberDetails: { [key: string]: any } = {
     'muhammad-iqbal': {
       bio: 'Passionate software engineer with expertise in IoT systems and embedded programming. Loves building innovative solutions.',
@@ -37,6 +39,7 @@ const Team: React.FC = () => {
       experience: '3+ years',
       location: 'Yogyakarta',
       hobby: 'Electronics & Robotics',
+      photoPath: '/assets/team/muhammad-iqbal.png',
       socialMedia: {
         github: 'https://github.com',
         linkedin: 'https://linkedin.com',
@@ -49,6 +52,7 @@ const Team: React.FC = () => {
       experience: '2+ years',
       location: 'Yogyakarta',
       hobby: 'Machine Learning & Gaming',
+      photoPath: '/assets/team/muhammad-islakha.png',
       socialMedia: {
         github: 'https://github.com',
         linkedin: 'https://linkedin.com'
@@ -60,6 +64,7 @@ const Team: React.FC = () => {
       experience: '2+ years',
       location: 'Yogyakarta',
       hobby: 'Mobile Apps & Travel',
+      photoPath: '/assets/team/rizky-gustiantoro.png',
       socialMedia: {
         github: 'https://github.com',
         linkedin: 'https://linkedin.com'
@@ -71,6 +76,7 @@ const Team: React.FC = () => {
       experience: '4+ years',
       location: 'Yogyakarta',
       hobby: 'Business Strategy & Sports',
+      photoPath: '/assets/team/rizal-hanifa.png',
       socialMedia: {
         linkedin: 'https://linkedin.com',
         twitter: 'https://twitter.com'
@@ -78,42 +84,46 @@ const Team: React.FC = () => {
     },
     'seva-giantama': {
       bio: 'Creative UI/UX designer and mobile developer. Passionate about creating beautiful and intuitive user experiences.',
-      skills: ['Figma', 'Adobe XD', 'React Native', 'UI/UX', 'Prototyping'],
+      skills: ['Figma', 'Adobe XD', 'React Native', 'UI Design', 'Prototyping'],
       experience: '2+ years',
       location: 'Yogyakarta',
-      hobby: 'Design & Photography',
+      hobby: 'Design & Technology',
+      photoPath: '/assets/team/seva-giantama.png',
       socialMedia: {
-        github: 'https://github.com',
-        linkedin: 'https://linkedin.com'
+        linkedin: 'https://linkedin.com',
+        twitter: 'https://twitter.com'
       }
     },
     'refanda-dicky': {
-      bio: 'Network infrastructure specialist and field technician. Expert in network security and system administration.',
-      skills: ['Network Security', 'System Admin', 'Linux', 'Cisco', 'Infrastructure'],
-      experience: '3+ years',
+      bio: 'Network specialist focused on infrastructure design and field operations. Expert in network security and monitoring.',
+      skills: ['Network Engineering', 'Routing', 'Switching', 'VPN', 'Monitoring'],
+      experience: '2+ years',
       location: 'Yogyakarta',
-      hobby: 'Networking & Cybersecurity',
+      hobby: 'Tech Innovation & Gaming',
+      photoPath: '/assets/team/refanda-dicky.png',
       socialMedia: {
         linkedin: 'https://linkedin.com'
       }
     },
     'farel-abid': {
-      bio: 'Creative developer with a passion for innovative digital solutions. Bridges the gap between design and development.',
-      skills: ['JavaScript', 'Creative Coding', 'Animation', 'WebGL', 'Three.js'],
+      bio: 'Creative developer bridging design and technology. Specializes in interactive web experiences and digital creativity.',
+      skills: ['Creative Coding', 'Animation', 'WebGL', 'Three.js', 'Design'],
       experience: '2+ years',
       location: 'Yogyakarta',
-      hobby: 'Creative Coding & Music',
+      hobby: 'Digital Art & Innovation',
+      photoPath: '/assets/team/farel-abid.png',
       socialMedia: {
         github: 'https://github.com',
-        twitter: 'https://twitter.com'
+        linkedin: 'https://linkedin.com'
       }
     },
     'aditya-alex': {
-      bio: 'Network engineer focused on building robust and scalable network infrastructure for modern businesses.',
-      skills: ['Network Engineering', 'Routing', 'Switching', 'VPN', 'Monitoring'],
+      bio: 'Network engineer with strong problem-solving skills. Focused on network optimization and troubleshooting.',
+      skills: ['Network Engineering', 'Troubleshooting', 'Security', 'Infrastructure'],
       experience: '2+ years',
       location: 'Yogyakarta',
-      hobby: 'Tech Innovation & Gaming',
+      hobby: 'Technology & Sports',
+      photoPath: '/assets/team/aditya-alex.png',
       socialMedia: {
         linkedin: 'https://linkedin.com'
       }
@@ -124,6 +134,7 @@ const Team: React.FC = () => {
       experience: '2+ years',
       location: 'Yogyakarta',
       hobby: 'Visual Arts & Photography',
+      photoPath: '/assets/team/husnan-maulana.png',
       socialMedia: {
         linkedin: 'https://linkedin.com',
         twitter: 'https://twitter.com'
@@ -131,51 +142,35 @@ const Team: React.FC = () => {
     }
   };
 
-  // Team member hover effects
+  // Handle image loading errors
+  const handleImageError = (memberId: string) => {
+    setImageErrors(prev => ({ ...prev, [memberId]: true }));
+  };
+
+  const handleImageLoad = (memberId: string) => {
+    setImageErrors(prev => ({ ...prev, [memberId]: false }));
+  };
+
+  // Simple hover effects
   const handleMemberHover = (memberId: string) => {
     setHoveredMember(memberId);
-    const card = document.querySelector(`[data-member="${memberId}"]`);
-    if (card) {
-      gsap.to(card, {
-        y: -15,
-        rotationY: 5,
-        scale: 1.05,
-        duration: 0.4,
-        ease: "power2.out"
-      });
-    }
   };
 
   const handleMemberLeave = (memberId: string) => {
     setHoveredMember(null);
-    const card = document.querySelector(`[data-member="${memberId}"]`);
-    if (card) {
-      gsap.to(card, {
-        y: 0,
-        rotationY: 0,
-        scale: 1,
-        duration: 0.4,
-        ease: "power2.out"
-      });
-    }
   };
 
   // Initial animations
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.fromTo('.team-card',
-        {
-          opacity: 0,
-          y: 60,
-          rotationX: -20
-        },
+        { opacity: 0, y: 30 },
         {
           opacity: 1,
           y: 0,
-          rotationX: 0,
-          duration: 0.8,
+          duration: 0.6,
           stagger: 0.1,
-          ease: "back.out(1.7)",
+          ease: "power2.out",
           scrollTrigger: {
             trigger: '.team-grid',
             start: 'top 80%'
@@ -189,39 +184,44 @@ const Team: React.FC = () => {
 
   const TeamCard: React.FC<{ member: TeamMember; index: number }> = ({ member, index }) => {
     const details = memberDetails[member.id] || {};
+    const hasImageError = imageErrors[member.id];
     
     return (
       <div
         data-member={member.id}
-        className="team-card group relative bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer border border-gray-100 overflow-hidden"
+        className={`team-card group relative bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer border border-gray-100 ${
+          hoveredMember === member.id ? 'transform -translate-y-2 scale-105' : ''
+        }`}
         onMouseEnter={() => handleMemberHover(member.id)}
         onMouseLeave={() => handleMemberLeave(member.id)}
         onClick={() => setSelectedMember(member)}
       >
         {/* Background gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-teal-50 to-blue-50 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-
-        {/* Floating background elements */}
-        <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-500">
-          <div className="w-6 h-6 bg-teal-200 rounded-full animate-pulse"></div>
-        </div>
+        <div className="absolute inset-0 bg-gradient-to-br from-teal-50 to-blue-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-3xl"></div>
 
         <div className="relative z-10 text-center">
-          {/* Avatar / Photo Placeholder */}
+          {/* Enhanced Avatar / Photo */}
           <div className="relative mx-auto mb-6">
-            {member.avatar ? (
-              <img 
-                src={member.avatar} 
-                alt={member.name}
-                className="w-24 h-24 rounded-full object-cover mx-auto group-hover:scale-110 transition-transform duration-500 border-4 border-white shadow-lg"
-              />
+            {details.photoPath && !hasImageError ? (
+              <div className="relative">
+                <img 
+                  src={details.photoPath} 
+                  alt={member.name}
+                  className="w-24 h-24 rounded-full object-cover mx-auto group-hover:scale-110 transition-transform duration-300 border-4 border-white shadow-lg"
+                  onError={() => handleImageError(member.id)}
+                  onLoad={() => handleImageLoad(member.id)}
+                  loading="lazy"
+                />
+              </div>
             ) : (
-              <div className="w-24 h-24 bg-gradient-to-br from-teal-400 to-blue-600 rounded-full mx-auto flex items-center justify-center text-white text-xl font-bold group-hover:scale-110 transition-all duration-500 shadow-lg relative">
-                {member.initials}
+              <div className="relative">
+                <div className="w-24 h-24 bg-gradient-to-br from-teal-400 to-blue-600 rounded-full mx-auto flex items-center justify-center text-white text-xl font-bold group-hover:scale-110 transition-all duration-300 shadow-lg">
+                  {member.initials}
+                </div>
                 
-                {/* Photo placeholder overlay */}
-                <div className="absolute inset-0 bg-black/20 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <Camera className="w-6 h-6 text-white" />
+                {/* Photo coming soon indicator */}
+                <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center">
+                  <Camera className="w-3 h-3 text-gray-800" />
                 </div>
               </div>
             )}
@@ -275,35 +275,32 @@ const Team: React.FC = () => {
           {/* Social Media Links */}
           <div className="flex justify-center space-x-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             {details.socialMedia?.github && (
-              <a href={details.socialMedia.github} className="text-gray-400 hover:text-gray-600 transition-colors">
+              <a href={details.socialMedia.github} className="text-gray-400 hover:text-gray-600 transition-colors" onClick={e => e.stopPropagation()}>
                 <Github className="w-4 h-4" />
               </a>
             )}
             {details.socialMedia?.linkedin && (
-              <a href={details.socialMedia.linkedin} className="text-gray-400 hover:text-blue-600 transition-colors">
+              <a href={details.socialMedia.linkedin} className="text-gray-400 hover:text-blue-600 transition-colors" onClick={e => e.stopPropagation()}>
                 <Linkedin className="w-4 h-4" />
               </a>
             )}
             {details.socialMedia?.twitter && (
-              <a href={details.socialMedia.twitter} className="text-gray-400 hover:text-blue-400 transition-colors">
+              <a href={details.socialMedia.twitter} className="text-gray-400 hover:text-blue-400 transition-colors" onClick={e => e.stopPropagation()}>
                 <Twitter className="w-4 h-4" />
               </a>
             )}
-            <button className="text-gray-400 hover:text-green-600 transition-colors">
+            <button className="text-gray-400 hover:text-green-600 transition-colors" onClick={e => e.stopPropagation()}>
               <Mail className="w-4 h-4" />
             </button>
           </div>
 
           {/* View Profile Button */}
-          <div className="mt-4 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
+          <div className="mt-4 opacity-0 group-hover:opacity-100 transition-all duration-300">
             <button className="px-4 py-2 bg-gradient-to-r from-teal-500 to-blue-600 text-white text-sm font-semibold rounded-full hover:from-teal-600 hover:to-blue-700 transition-all duration-300">
               View Profile
             </button>
           </div>
         </div>
-
-        {/* Hover glow effect */}
-        <div className="absolute -inset-1 bg-gradient-to-r from-teal-400 to-blue-600 opacity-0 group-hover:opacity-30 transition-opacity duration-500 blur-xl"></div>
       </div>
     );
   };
@@ -372,34 +369,54 @@ const Team: React.FC = () => {
           ))}
         </div>
 
-        {/* Photo Upload Call-to-Action */}
+        {/* Photo Upload Guide */}
         <div className="bg-gradient-to-r from-teal-50 to-blue-50 rounded-3xl p-8 text-center border border-teal-100">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-teal-500 to-blue-600 rounded-2xl mb-6">
             <Camera className="w-8 h-8 text-white" />
           </div>
           <h3 className="text-2xl font-bold text-gray-900 mb-4">
-            📸 Team Photos Coming Soon!
+            📸 Professional Team Photos
           </h3>
           <p className="text-gray-600 max-w-2xl mx-auto mb-6">
-            We're preparing professional photos of our amazing team members. 
-            Real photos will be added here to showcase the talented individuals behind Cont Solutions.
+            To display real team photos, place member photos in <code className="bg-gray-200 px-2 py-1 rounded text-sm">/public/assets/team/</code> folder 
+            with filenames matching the member IDs (e.g., <code className="bg-gray-200 px-2 py-1 rounded text-sm">muhammad-iqbal.png</code>).
           </p>
-          <div className="inline-flex items-center space-x-2 text-teal-600 font-semibold">
-            <Sparkles className="w-5 h-5" />
-            <span>Photo shoot scheduled this month!</span>
+          <div className="grid md:grid-cols-3 gap-4 text-sm text-gray-600 max-w-4xl mx-auto">
+            <div className="flex items-start space-x-2">
+              <Sparkles className="w-4 h-4 text-yellow-500 mt-0.5 flex-shrink-0" />
+              <span>Recommended size: 300x300px or higher</span>
+            </div>
+            <div className="flex items-start space-x-2">
+              <Sparkles className="w-4 h-4 text-yellow-500 mt-0.5 flex-shrink-0" />
+              <span>Supported formats: png, PNG, WebP</span>
+            </div>
+            <div className="flex items-start space-x-2">
+              <Sparkles className="w-4 h-4 text-yellow-500 mt-0.5 flex-shrink-0" />
+              <span>Square aspect ratio works best</span>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Member Detail Modal */}
+      {/* Simple Tailwind Modal - Lightweight & Reliable */}
       {selectedMember && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-start mb-6">
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50" onClick={() => setSelectedMember(null)}>
+          <div className="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white" onClick={e => e.stopPropagation()}>
+            {/* Header */}
+            <div className="flex justify-between items-center pb-3">
               <div className="flex items-center space-x-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-teal-400 to-blue-600 rounded-full flex items-center justify-center text-white text-xl font-bold">
-                  {selectedMember.initials}
-                </div>
+                {memberDetails[selectedMember.id]?.photoPath && !imageErrors[selectedMember.id] ? (
+                  <img 
+                    src={memberDetails[selectedMember.id].photoPath}
+                    alt={selectedMember.name}
+                    className="w-16 h-16 rounded-full object-cover"
+                    onError={() => handleImageError(selectedMember.id)}
+                  />
+                ) : (
+                  <div className="w-16 h-16 bg-gradient-to-br from-teal-400 to-blue-600 rounded-full flex items-center justify-center text-white text-xl font-bold">
+                    {selectedMember.initials}
+                  </div>
+                )}
                 <div>
                   <h3 className="text-2xl font-bold text-gray-900">
                     {selectedMember.name}
@@ -408,67 +425,71 @@ const Team: React.FC = () => {
                 </div>
               </div>
               <button
+                className="text-gray-400 hover:text-gray-600 transition-colors"
                 onClick={() => setSelectedMember(null)}
-                className="text-gray-400 hover:text-gray-600 text-2xl"
               >
-                ×
+                <X className="w-6 h-6" />
               </button>
             </div>
-            
-            {memberDetails[selectedMember.id] && (
-              <div className="space-y-6">
-                <p className="text-gray-600 leading-relaxed">
-                  {memberDetails[selectedMember.id].bio}
-                </p>
-                
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-3">Skills & Expertise</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {memberDetails[selectedMember.id].skills?.map((skill: string, index: number) => (
-                      <span 
-                        key={index}
-                        className="px-3 py-1 bg-teal-100 text-teal-700 text-sm rounded-full"
-                      >
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
-                </div>
 
-                <div className="grid md:grid-cols-2 gap-4 text-sm">
-                  <div className="flex items-center space-x-2">
-                    <Award className="w-4 h-4 text-gray-400" />
-                    <span className="text-gray-600">Experience: {memberDetails[selectedMember.id].experience}</span>
+            {/* Content */}
+            <div className="mt-4">
+              {memberDetails[selectedMember.id] && (
+                <div className="space-y-4">
+                  <p className="text-gray-600 leading-relaxed">
+                    {memberDetails[selectedMember.id].bio}
+                  </p>
+                  
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-3">Skills & Expertise</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {memberDetails[selectedMember.id].skills?.map((skill: string, index: number) => (
+                        <span 
+                          key={index}
+                          className="px-3 py-1 bg-teal-100 text-teal-700 text-sm rounded-full"
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <MapPin className="w-4 h-4 text-gray-400" />
-                    <span className="text-gray-600">Location: {memberDetails[selectedMember.id].location}</span>
+
+                  <div className="grid md:grid-cols-2 gap-4 text-sm bg-gray-50 rounded-lg p-4">
+                    <div className="flex items-center space-x-2">
+                      <Award className="w-4 h-4 text-gray-400" />
+                      <span className="text-gray-600">Experience: {memberDetails[selectedMember.id].experience}</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <MapPin className="w-4 h-4 text-gray-400" />
+                      <span className="text-gray-600">Location: {memberDetails[selectedMember.id].location}</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Coffee className="w-4 h-4 text-gray-400" />
+                      <span className="text-gray-600">Hobby: {memberDetails[selectedMember.id].hobby}</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Heart className="w-4 h-4 text-gray-400" />
+                      <span className="text-gray-600">Status: Available</span>
+                    </div>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <Coffee className="w-4 h-4 text-gray-400" />
-                    <span className="text-gray-600">Hobby: {memberDetails[selectedMember.id].hobby}</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Heart className="w-4 h-4 text-gray-400" />
-                    <span className="text-gray-600">Status: Available</span>
+
+                  {/* CTA Buttons */}
+                  <div className="flex flex-col sm:flex-row gap-3 pt-4">
+                    <button 
+                      onClick={() => setSelectedMember(null)}
+                      className="flex-1 bg-gradient-to-r from-teal-500 to-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-teal-600 hover:to-blue-700 transition-all duration-300"
+                    >
+                      Connect
+                    </button>
+                    <button 
+                      onClick={() => setSelectedMember(null)}
+                      className="flex-1 border border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-colors duration-300"
+                    >
+                      View Portfolio
+                    </button>
                   </div>
                 </div>
-              </div>
-            )}
-            
-            <div className="flex space-x-4 mt-8">
-              <button 
-                onClick={() => setSelectedMember(null)}
-                className="flex-1 px-6 py-3 bg-gradient-to-r from-teal-500 to-blue-600 text-white font-semibold rounded-xl hover:from-teal-600 hover:to-blue-700 transition-all duration-300"
-              >
-                Connect
-              </button>
-              <button 
-                onClick={() => setSelectedMember(null)}
-                className="px-6 py-3 border border-gray-300 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 transition-all duration-300"
-              >
-                View Portfolio
-              </button>
+              )}
             </div>
           </div>
         </div>

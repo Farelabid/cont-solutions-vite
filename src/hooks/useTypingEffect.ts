@@ -1,32 +1,40 @@
-// src/hooks/useTypingEffect.ts
+// src/hooks/useTypingEffect.ts - Typing Effect Hook
 
 import { useState, useEffect } from 'react';
 
-export const useTypingEffect = (texts: string[], delay: number = 2000) => {
+export const useTypingEffect = (texts: string[], speed: number = 2000): string => {
+  const [currentTextIndex, setCurrentTextIndex] = useState(0);
   const [currentText, setCurrentText] = useState('');
-  const [currentIndex, setCurrentIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [charIndex, setCharIndex] = useState(0);
 
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      const fullText = texts[currentIndex];
-      
-      if (isDeleting) {
-        setCurrentText(fullText.substring(0, currentText.length - 1));
+    const text = texts[currentTextIndex];
+    
+    const timer = setTimeout(() => {
+      if (!isDeleting) {
+        // Typing
+        if (charIndex < text.length) {
+          setCurrentText(text.substring(0, charIndex + 1));
+          setCharIndex(charIndex + 1);
+        } else {
+          // Pause before deleting
+          setTimeout(() => setIsDeleting(true), speed);
+        }
       } else {
-        setCurrentText(fullText.substring(0, currentText.length + 1));
-      }
-
-      if (!isDeleting && currentText === fullText) {
-        setTimeout(() => setIsDeleting(true), delay);
-      } else if (isDeleting && currentText === '') {
-        setIsDeleting(false);
-        setCurrentIndex((prevIndex) => (prevIndex + 1) % texts.length);
+        // Deleting
+        if (charIndex > 0) {
+          setCurrentText(text.substring(0, charIndex - 1));
+          setCharIndex(charIndex - 1);
+        } else {
+          setIsDeleting(false);
+          setCurrentTextIndex((currentTextIndex + 1) % texts.length);
+        }
       }
     }, isDeleting ? 50 : 100);
 
-    return () => clearTimeout(timeout);
-  }, [currentText, currentIndex, isDeleting, texts, delay]);
+    return () => clearTimeout(timer);
+  }, [charIndex, isDeleting, currentTextIndex, texts, speed]);
 
   return currentText;
 };

@@ -1,7 +1,7 @@
-// src/components/common/Navigation.tsx - Advanced Interactive
+// src/components/common/Navigation.tsx - Fixed Hover Underline Position
 
 import React, { useState, useEffect } from 'react';
-import { Menu, X, ChevronDown } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { gsap } from 'gsap';
 
 const Navigation: React.FC = () => {
@@ -35,7 +35,6 @@ const Navigation: React.FC = () => {
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
-      // Advanced smooth scroll with GSAP
       gsap.to(window, {
         duration: 1.5,
         scrollTo: { y: element, offsetY: 80 },
@@ -45,10 +44,9 @@ const Navigation: React.FC = () => {
     setIsMobileMenuOpen(false);
   };
 
-  // Cont Solutions Logo Component
+  // Safe Cont Solutions Logo Component
   const ContSolutionsLogo = () => (
     <div className="flex items-center space-x-3 group cursor-pointer">
-      {/* Logo SVG - based on uploaded logo */}
       <div className="relative">
         <svg 
           className="w-12 h-12 transform group-hover:scale-110 transition-all duration-300" 
@@ -69,35 +67,37 @@ const Navigation: React.FC = () => {
             </filter>
           </defs>
           
-          {/* Main Logo Shape - inspired by uploaded logo */}
-          <path 
-            d="M15 25 Q25 15, 45 20 Q65 10, 85 25 Q75 45, 55 40 Q35 50, 15 25 Z" 
+          <circle 
+            cx="50" 
+            cy="50" 
+            r="35" 
             fill="url(#logoGradient)"
             filter="url(#logoGlow)"
             className="opacity-90 group-hover:opacity-100 transition-opacity"
           />
-          <path 
-            d="M20 65 Q30 50, 50 55 Q70 45, 80 65 Q70 80, 50 75 Q30 85, 20 65 Z" 
-            fill="url(#logoGradient)"
-            filter="url(#logoGlow)"
-            className="opacity-80 group-hover:opacity-100 transition-opacity"
-          />
+          <text 
+            x="50" 
+            y="58" 
+            textAnchor="middle" 
+            fontSize="20" 
+            fontWeight="bold" 
+            fill="white"
+          >
+            CS
+          </text>
           
-          {/* Dynamic accent */}
           <circle 
-            cx="50" 
-            cy="35" 
+            cx="70" 
+            cy="30" 
             r="3" 
             fill="#fbbf24"
             className="animate-pulse group-hover:animate-bounce"
           />
         </svg>
         
-        {/* Subtle glow effect */}
         <div className="absolute inset-0 bg-gradient-to-r from-teal-400 to-blue-900 rounded-full opacity-0 group-hover:opacity-20 blur-xl transition-all duration-500"></div>
       </div>
       
-      {/* Company Text */}
       <div className="flex flex-col">
         <span className="text-xl font-bold text-gray-800 group-hover:text-teal-600 transition-colors duration-300">
           Cont Solutions
@@ -152,9 +152,9 @@ const Navigation: React.FC = () => {
                     <span>{link.label}</span>
                   </span>
                   
-                  {/* Animated underline */}
+                  {/* Fixed Animated underline - proper positioning */}
                   {activeSection !== link.id && (
-                    <div className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-gradient-to-r from-teal-500 to-blue-600 group-hover:w-3/4 group-hover:left-1/8 transition-all duration-300"></div>
+                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-teal-500 to-blue-600 group-hover:w-3/4 transition-all duration-300"></div>
                   )}
                 </button>
               ))}
@@ -202,8 +202,7 @@ const Navigation: React.FC = () => {
                     }
                   `}
                   style={{ 
-                    animationDelay: `${index * 50}ms`,
-                    animation: isMobileMenuOpen ? 'slideInDown 0.3s ease-out' : 'none'
+                    animationDelay: `${index * 50}ms`
                   }}
                 >
                   <span className="flex items-center space-x-3">
@@ -212,33 +211,10 @@ const Navigation: React.FC = () => {
                   </span>
                 </button>
               ))}
-              
-              <button 
-                onClick={() => scrollToSection('contact')}
-                className="w-full mt-4 px-4 py-3 bg-gradient-to-r from-yellow-400 to-orange-500 text-gray-800 font-bold rounded-xl hover:from-yellow-500 hover:to-orange-600 transition-all duration-300"
-              >
-                🚀 Get Started Now
-              </button>
             </div>
           </div>
         </div>
       </nav>
-
-      {/* Spacer untuk fixed navigation */}
-      <div className="h-20"></div>
-
-      <style jsx>{`
-        @keyframes slideInDown {
-          from {
-            opacity: 0;
-            transform: translateY(-10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-      `}</style>
     </>
   );
 };

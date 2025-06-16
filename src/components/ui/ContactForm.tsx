@@ -1,4 +1,4 @@
-// src/components/ui/ContactForm.tsx
+// src/components/ui/ContactForm.tsx - Contact Form Component
 
 import React, { useState } from 'react';
 import type { ContactFormData } from '../../types';

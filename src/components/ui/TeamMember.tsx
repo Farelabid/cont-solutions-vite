@@ -1,4 +1,4 @@
-// src/components/ui/TeamMember.tsx
+// src/components/ui/TeamMember.tsx - Team Member Card Component
 
 import React, { useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
@@ -17,20 +17,22 @@ const TeamMember: React.FC<TeamMemberProps> = ({ member, index }) => {
     if (!memberElement || !avatarElement) return;
 
     // Animation on scroll
-    gsap.fromTo(memberElement,
-      { opacity: 0, y: 30 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.6,
-        delay: index * 0.1,
-        scrollTrigger: {
-          trigger: memberElement,
-          start: 'top 85%',
-          toggleActions: 'play none none reverse'
+    const ctx = gsap.context(() => {
+      gsap.fromTo(memberElement,
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          delay: index * 0.1,
+          scrollTrigger: {
+            trigger: memberElement,
+            start: 'top 85%',
+            toggleActions: 'play none none reverse'
+          }
         }
-      }
-    );
+      );
+    });
 
     // Hover animations
     const handleMouseEnter = () => {
@@ -57,7 +59,7 @@ const TeamMember: React.FC<TeamMemberProps> = ({ member, index }) => {
     return () => {
       memberElement.removeEventListener('mouseenter', handleMouseEnter);
       memberElement.removeEventListener('mouseleave', handleMouseLeave);
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+      ctx.revert();
     };
   }, [index]);
 

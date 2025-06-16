@@ -1,4 +1,4 @@
-// src/components/ui/ServiceCard.tsx
+// src/components/ui/ServiceCard.tsx - Service Card Component
 
 import React, { useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
@@ -15,20 +15,22 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, index }) => {
     if (!card) return;
 
     // Animation on scroll
-    gsap.fromTo(card,
-      { opacity: 0, y: 30 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.6,
-        delay: index * 0.05,
-        scrollTrigger: {
-          trigger: card,
-          start: 'top 85%',
-          toggleActions: 'play none none reverse'
+    const ctx = gsap.context(() => {
+      gsap.fromTo(card,
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          delay: index * 0.05,
+          scrollTrigger: {
+            trigger: card,
+            start: 'top 85%',
+            toggleActions: 'play none none reverse'
+          }
         }
-      }
-    );
+      );
+    });
 
     // Hover animations
     const handleMouseEnter = () => {
@@ -45,7 +47,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, index }) => {
     return () => {
       card.removeEventListener('mouseenter', handleMouseEnter);
       card.removeEventListener('mouseleave', handleMouseLeave);
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+      ctx.revert();
     };
   }, [index]);
 

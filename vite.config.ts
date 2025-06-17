@@ -1,17 +1,38 @@
-// vite.config.ts - Simple configuration
-
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import path from 'path'
+import { fileURLToPath } from 'url'
 
-// https://vitejs.dev/config/
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
 export default defineConfig({
   plugins: [react()],
-  server: {
-    port: 5173,
-    open: true,
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
   },
   build: {
-    outDir: 'dist',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom'],
+          'gsap-vendor': ['gsap'],
+          'ui-vendor': ['lucide-react', 'clsx']
+        }
+      }
+    },
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true
+      }
+    },
     sourcemap: false,
+    chunkSizeWarningLimit: 1000
   },
-});
+  optimizeDeps: {
+    include: ['gsap', 'react', 'react-dom']
+  }
+})

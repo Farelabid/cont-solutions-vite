@@ -2,197 +2,52 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <!-- Favicon using PNG logo -->
-    <link rel="icon" type="image/png" href="/assets/logo-contsol.png" />
-    <!-- Fallback favicon -->
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <!-- SEO Meta Tags -->
-    <meta name="description" content="Contsol Indonesia - Continuous Development, Innovative Solutions. Professional IT services, web development, mobile apps, and creative studio services in Yogyakarta." />
-    <meta name="keywords" content="Contsol, IT solutions, web development, mobile apps, software development, IoT, AI development, UI/UX design, creative studio, Yogyakarta, Indonesia" />
-    <meta name="author" content="Contsol Indonesia" />
+    <meta name="description" content="Cont Solution Indonesia - Professional IT services, web development, mobile apps, and creative studio services. Transform your business with innovative technology solutions." />
+    <meta name="keywords" content="IT solutions, web development, mobile apps, software development, IoT, AI development, UI/UX design, Yogyakarta, Indonesia, Cont Solutions" />
+    <meta name="author" content="Cont Solution Indonesia" />
     
     <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="Contsol Indonesia - Continuous Development, Innovative Solutions" />
-    <meta property="og:description" content="Professional IT services, web development, mobile apps, and creative studio services in Yogyakarta." />
+    <meta property="og:title" content="Cont Solution Indonesia - Continuous Development, Innovative Solutions" />
+    <meta property="og:description" content="Transform your business with cutting-edge technology. Professional IT services and creative solutions." />
+    <meta property="og:image" content="/og-image.png" />
+    <meta property="og:url" content="https://contsoldev.com" />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://contsoldev.com/" />
-    <meta property="og:image" content="https://contsoldev.com/assets/logo-contsol.png" />
-    <meta property="og:site_name" content="Contsol Indonesia" />
     
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Contsol Indonesia - Continuous Development, Innovative Solutions" />
-    <meta name="twitter:description" content="Professional IT services, web development, mobile apps, and creative studio services in Yogyakarta." />
-    <meta name="twitter:image" content="https://contsoldev.com/assets/logo-contsol.png" />
+    <meta name="twitter:title" content="Cont Solution Indonesia" />
+    <meta name="twitter:description" content="Transform your business with cutting-edge technology solutions." />
+    <meta name="twitter:image" content="/twitter-card.png" />
     
     <!-- Theme Color -->
-    <meta name="theme-color" content="#4ECDC4" />
+    <meta name="theme-color" content="#14b8a6" />
     
-    <!-- Apple Touch Icon -->
-    <link rel="apple-touch-icon" href="public/assets/logo-contsol.png" />
-    
-    <!-- Updated Title with Contsol Branding -->
-    <title>Contsol Indonesia - Continuous Development, Innovative Solutions</title>
-    
-    <!-- Google Fonts Preconnect for Performance -->
+    <!-- Preconnect to external domains -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     
-    <!-- Preload critical fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <title>Cont Solution Indonesia - Continuous Development, Innovative Solutions</title>
     
-    <!-- Additional Performance Optimizations -->
-    <link rel="dns-prefetch" href="//fonts.googleapis.com" />
-    <link rel="dns-prefetch" href="//fonts.gstatic.com" />
-    
-    <!-- Manifest for PWA -->
-    <link rel="manifest" href="/manifest.json" />
-    
-    <!-- Structured Data for SEO -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "Contsol Indonesia",
-      "alternateName": "Contsol",
-      "description": "Continuous Development, Innovative Solutions",
-      "url": "https://contsoldev.com/",
-      "logo": "https://contsoldev.com/assets/logo-contsol.png",
-      "image": "https://contsoldev.com/assets/logo-contsol.png",
-      "foundingDate": "2023",
-      "founders": [
-        {
-          "@type": "Person",
-          "name": "Muhammad Iqbal G."
-        }
-      ],
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": "Jl. Persatuan 3 No.28, RT.07/RW.20, Demangan, Maguwoharjo",
-        "addressLocality": "Depok",
-        "addressRegion": "Sleman",
-        "addressCountry": "Indonesia",
-        "postalCode": "55281"
-      },
-      "contactPoint": {
-        "@type": "ContactPoint",
-        "telephone": "+62-882-2544-4313",
-        "contactType": "customer service",
-        "email": "contsolhelp@gmail.com",
-        "availableLanguage": ["Indonesian", "English"]
-      },
-      "sameAs": [
-        "https://facebook.com/contsoldev",
-        "https://twitter.com/contsoldev",
-        "https://linkedin.com/company/contsoldev",
-        "https://instagram.com/contsoldev",
-        "https://github.com/contsoldev"
-      ],
-      "serviceType": [
-        "Web Development",
-        "Mobile App Development", 
-        "Software Development",
-        "IT Consulting",
-        "UI/UX Design",
-        "Creative Services",
-        "IoT Development",
-        "AI Development"
-      ],
-      "areaServed": {
-        "@type": "Place",
-        "name": "Indonesia"
-      },
-      "hasOfferCatalog": {
-        "@type": "OfferCatalog",
-        "name": "IT Solutions & Creative Services",
-        "itemListElement": [
-          {
-            "@type": "OfferCatalog",
-            "name": "IT Solutions",
-            "itemListElement": [
-              {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Web Development"}},
-              {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Mobile App Development"}},
-              {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Software Development"}},
-              {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "AI Development"}},
-              {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "IoT Development"}}
-            ]
-          },
-          {
-            "@type": "OfferCatalog",
-            "name": "Creative Studio",
-            "itemListElement": [
-              {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Logo Design"}},
-              {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Social Media Management"}},
-              {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Photo Production"}},
-              {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Video Ads Production"}}
-            ]
-          }
-        ]
-      }
-    }
-    </script>
-
-    <!-- Preload critical assets -->
-    <link rel="preload" href="/assets/logo-contsol.png" as="image" />
-    
-    <!-- Performance optimizations -->
-    <style>
-      /* Critical CSS for loading screen */
-      .loading-screen {
-        position: fixed;
-        inset: 0;
-        background: linear-gradient(135deg, #4ECDC4 0%, #2c5f7a 100%);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 9999;
-      }
-      
-      /* Prevent flash of unstyled content */
-      body {
-        margin: 0;
-        padding: 0;
-        font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      }
-      
-      /* Hide scrollbar during loading */
-      body.loading {
-        overflow: hidden;
-      }
-    </style>
+    <!-- Favicon variations -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="manifest" href="/site.webmanifest" />
   </head>
-  <body class="loading">
+  <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     
-    <!-- Performance and Analytics Scripts -->
-    <script>
-      // Remove loading class after page load
-      window.addEventListener('load', () => {
-        document.body.classList.remove('loading');
-      });
-
-      // Service Worker for PWA (if needed)
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js')
-            .then((registration) => {
-              console.log('SW registered: ', registration);
-            })
-            .catch((registrationError) => {
-              console.log('SW registration failed: ', registrationError);
-            });
-        });
-      }
-
-      // Error handling for logo loading
-      window.addEventListener('error', (e) => {
-        if (e.target && e.target.tagName === 'IMG' && e.target.src.includes('logo-contsol.png')) {
-          console.warn('Logo PNG failed to load, using fallback');
-        }
-      }, true);
-    </script>
+    <!-- No script fallback -->
+    <noscript>
+      <div style="text-align: center; padding: 50px;">
+        <h1>JavaScript Required</h1>
+        <p>Please enable JavaScript to use this website.</p>
+      </div>
+    </noscript>
   </body>
 </html>

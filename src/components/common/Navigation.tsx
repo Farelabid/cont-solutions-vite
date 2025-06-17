@@ -1,159 +1,93 @@
-// src/components/common/Navigation.tsx - Corrected for Vite + React + TypeScript
-
 import React, { useState, useEffect } from 'react';
-import { Menu, X } from 'lucide-react';
-import { gsap } from 'gsap';
-import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
-
-// Register GSAP plugins
-gsap.registerPlugin(ScrollToPlugin);
-
-interface NavLink {
-  id: string;
-  label: string;
-  icon: string;
-}
+import { Menu, X, Sun, Moon } from 'lucide-react';
+import { useTheme } from '@/hooks/useTheme';
+import clsx from 'clsx';
 
 const Navigation: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
+  const [isInHero, setIsInHero] = useState(true);
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
       setIsScrolled(scrollY > 50);
 
+      // Check if in hero
+      const heroHeight = window.innerHeight;
+      setIsInHero(scrollY < heroHeight - 100);
+
       // Detect active section
       const sections = ['home', 'about', 'services', 'team', 'contact'];
-      const current = sections.find(section => {
+      for (const section of sections) {
         const element = document.getElementById(section);
         if (element) {
           const rect = element.getBoundingClientRect();
-          return rect.top <= 100 && rect.bottom >= 100;
+          if (rect.top <= 100 && rect.bottom >= 100) {
+            setActiveSection(section);
+            break;
+          }
         }
-        return false;
-      });
-      
-      if (current) setActiveSection(current);
+      }
     };
 
     window.addEventListener('scroll', handleScroll);
+    handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
-      gsap.to(window, {
-        duration: 1.5,
-        scrollTo: { y: element, offsetY: 80 },
-        ease: "power2.inOut"
-      });
+      element.scrollIntoView({ behavior: 'smooth' });
     }
     setIsMobileMenuOpen(false);
   };
 
-  // Contsol Logo Component using PNG
-  const ContsolLogo: React.FC = () => (
-    <div className="flex items-center space-x-3 group cursor-pointer">
-      <div className="relative">
-        <img 
-          src="/assets/logo-contsol.png"
-          alt="Contsol Logo"
-          className="w-12 h-12 transform group-hover:scale-110 transition-all duration-300"
-          onError={(e) => {
-            // Fallback to SVG if PNG not found
-            const target = e.target as HTMLImageElement;
-            target.style.display = 'none';
-            target.nextElementSibling?.classList.remove('hidden');
-          }}
-        />
-        
-        {/* Fallback SVG Logo */}
-        <svg 
-          className="w-12 h-12 transform group-hover:scale-110 transition-all duration-300 hidden" 
-          viewBox="0 0 100 100" 
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <defs>
-            <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" style={{stopColor: '#4ECDC4', stopOpacity: 1}} />
-              <stop offset="100%" style={{stopColor: '#2c5f7a', stopOpacity: 1}} />
-            </linearGradient>
-            <filter id="logoGlow">
-              <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-              <feMerge> 
-                <feMergeNode in="coloredBlur"/>
-                <feMergeNode in="SourceGraphic"/>
-              </feMerge>
-            </filter>
-          </defs>
-          
-          <circle 
-            cx="50" 
-            cy="50" 
-            r="35" 
-            fill="url(#logoGradient)"
-            filter="url(#logoGlow)"
-            className="opacity-90 group-hover:opacity-100 transition-opacity"
-          />
-          <text 
-            x="50" 
-            y="58" 
-            textAnchor="middle" 
-            fontSize="18" 
-            fontWeight="bold" 
-            fill="white"
-          >
-            CS
-          </text>
-          
-          <circle 
-            cx="70" 
-            cy="30" 
-            r="3" 
-            fill="#fbbf24"
-            className="animate-pulse group-hover:animate-bounce"
-          />
-        </svg>
-        
-        <div className="absolute inset-0 bg-gradient-to-r from-teal-400 to-blue-900 rounded-full opacity-0 group-hover:opacity-20 blur-xl transition-all duration-500"></div>
-      </div>
-      
-      <div className="flex flex-col">
-        <span className="text-xl font-bold text-gray-800 group-hover:text-teal-600 transition-colors duration-300">
-          Contsol
-        </span>
-        <span className="text-xs text-gray-500 group-hover:text-teal-500 transition-colors duration-300 -mt-1">
-          Continuous Solutions
-        </span>
-      </div>
-    </div>
-  );
-
-  const navLinks: NavLink[] = [
-    { id: 'home', label: 'Home', icon: '🏠' },
-    { id: 'about', label: 'About', icon: '📖' },
-    { id: 'services', label: 'Services', icon: '⚡' },
-    { id: 'team', label: 'Team', icon: '👥' },
-    { id: 'contact', label: 'Contact', icon: '📞' },
+  const navLinks = [
+    { id: 'home', label: 'Home' },
+    { id: 'about', label: 'About' },
+    { id: 'services', label: 'Services' },
+    { id: 'portfolio', label: 'Portfolio' },
+    { id: 'team', label: 'Team' },
+    { id: 'contact', label: 'Contact' },
   ];
+
+  const navbarStyle = isInHero && !isScrolled
+    ? 'bg-transparent text-white'
+    : 'bg-white/90 dark:bg-dark-900/90 backdrop-blur-md shadow-lg text-gray-900 dark:text-white';
 
   return (
     <>
-      <nav className={`
-        fixed top-0 w-full z-50 transition-all duration-500 ease-out
-        ${isScrolled 
-          ? 'bg-white/95 backdrop-blur-xl shadow-2xl py-3' 
-          : 'bg-white/90 backdrop-blur-md py-4'
-        }
-      `}>
+      <nav className={clsx(
+        'fixed top-0 w-full z-50 transition-all duration-300',
+        navbarStyle,
+        isScrolled ? 'py-3' : 'py-4'
+      )}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
-            {/* Logo */}
-            <div onClick={() => scrollToSection('home')}>
-              <ContsolLogo />
+            {/* Logo with text */}
+            <div 
+              onClick={() => scrollToSection('home')}
+              className="flex items-center space-x-3 cursor-pointer"
+            >
+              <img 
+                src="/assets/logo-contsol.png" 
+                alt="Cont Solutions Logo" 
+                className="h-12 w-auto"
+                onError={(e) => {
+                  // Fallback if logo doesn't exist
+                  e.currentTarget.style.display = 'none';
+                }}
+              />
+              <span className={clsx(
+                "text-xl font-bold",
+                isInHero && !isScrolled ? "text-white" : "text-gray-900 dark:text-white"
+              )}>
+                ContsolDev
+              </span>
             </div>
 
             {/* Desktop Navigation */}
@@ -162,82 +96,80 @@ const Navigation: React.FC = () => {
                 <button
                   key={link.id}
                   onClick={() => scrollToSection(link.id)}
-                  className={`
-                    relative px-4 py-2 rounded-full font-medium transition-all duration-300 group
-                    ${activeSection === link.id 
-                      ? 'text-teal-600 bg-teal-50' 
-                      : 'text-gray-600 hover:text-teal-600 hover:bg-teal-50'
-                    }
-                  `}
-                >
-                  <span className="relative z-10 flex items-center space-x-1">
-                    <span className="text-sm">{link.icon}</span>
-                    <span>{link.label}</span>
-                  </span>
-                  
-                  {/* Active indicator */}
-                  {activeSection === link.id && (
-                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-6 h-0.5 bg-teal-600 rounded-full"></div>
+                  className={clsx(
+                    'px-5 py-2.5 font-medium rounded-lg transition-all duration-200',
+                    activeSection === link.id 
+                      ? 'bg-primary-500 text-white' 
+                      : isInHero && !isScrolled
+                        ? 'text-white/90 hover:bg-white/10'
+                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-800'
                   )}
+                >
+                  {link.label}
                 </button>
               ))}
-            </div>
-
-            {/* CTA Button */}
-            <div className="hidden lg:block">
+              
+              {/* Theme Toggle */}
               <button
-                onClick={() => scrollToSection('contact')}
-                className="relative group px-6 py-3 bg-gradient-to-r from-teal-500 to-blue-600 text-white font-semibold rounded-full overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-xl"
+                onClick={toggleTheme}
+                className={clsx(
+                  'ml-4 p-2.5 rounded-lg transition-colors',
+                  isInHero && !isScrolled
+                    ? 'bg-white/10 hover:bg-white/20 text-white'
+                    : 'bg-gray-100 dark:bg-dark-800 hover:bg-gray-200 dark:hover:bg-dark-700'
+                )}
+                aria-label="Toggle theme"
               >
-                <span className="relative z-10">Get Started</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-teal-600 to-blue-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
               </button>
             </div>
 
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden w-10 h-10 rounded-full bg-teal-50 text-teal-600 flex items-center justify-center hover:bg-teal-100 transition-colors duration-300"
+              className={clsx(
+                'lg:hidden p-2 rounded-lg',
+                isInHero && !isScrolled
+                  ? 'bg-white/10 text-white'
+                  : 'bg-gray-100 dark:bg-dark-800'
+              )}
             >
-              {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
         </div>
+      </nav>
 
-        {/* Mobile Menu */}
-        {isMobileMenuOpen && (
-          <div className="lg:hidden absolute top-full left-0 w-full bg-white/95 backdrop-blur-xl border-t border-gray-200 shadow-xl">
-            <div className="max-w-7xl mx-auto px-4 py-6">
-              <div className="grid gap-4">
+      {/* Mobile Menu */}
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 z-40 lg:hidden">
+          <div 
+            className="absolute inset-0 bg-black/50"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+          
+          <div className="absolute right-0 top-0 h-full w-80 bg-white dark:bg-dark-900 shadow-xl">
+            <div className="p-6 pt-20">
+              <nav className="space-y-2">
                 {navLinks.map((link) => (
                   <button
                     key={link.id}
                     onClick={() => scrollToSection(link.id)}
-                    className={`
-                      flex items-center space-x-3 w-full text-left px-4 py-3 rounded-xl font-medium transition-all duration-300
-                      ${activeSection === link.id 
-                        ? 'text-teal-600 bg-teal-50' 
-                        : 'text-gray-600 hover:text-teal-600 hover:bg-teal-50'
-                      }
-                    `}
+                    className={clsx(
+                      'w-full text-left px-4 py-3 rounded-lg font-medium transition-colors',
+                      activeSection === link.id
+                        ? 'bg-primary-500 text-white'
+                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-800'
+                    )}
                   >
-                    <span className="text-lg">{link.icon}</span>
-                    <span>{link.label}</span>
+                    {link.label}
                   </button>
                 ))}
-                
-                {/* Mobile CTA */}
-                <button
-                  onClick={() => scrollToSection('contact')}
-                  className="mt-4 w-full px-6 py-3 bg-gradient-to-r from-teal-500 to-blue-600 text-white font-semibold rounded-xl hover:from-teal-600 hover:to-blue-700 transition-all duration-300"
-                >
-                  Get Started
-                </button>
-              </div>
+              </nav>
             </div>
           </div>
-        )}
-      </nav>
+        </div>
+      )}
     </>
   );
 };

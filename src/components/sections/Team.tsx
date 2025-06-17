@@ -4,8 +4,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { 
   Users, 
   Github, 
-  Linkedin, 
-  Twitter,
+  Linkedin,
   Mail,
   Briefcase,
   MapPin,

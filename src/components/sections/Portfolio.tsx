@@ -8,7 +8,6 @@ import {
   ExternalLink,
   ChevronLeft,
   ChevronRight,
-  Sparkles,
   Filter,
   X,
   Zap

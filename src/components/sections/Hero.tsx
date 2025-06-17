@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
-import { ChevronDown, Sparkles, Rocket, ArrowRight } from 'lucide-react';
+import { Sparkles, Rocket, ArrowRight } from 'lucide-react';
 import { useTypingEffect } from '@/hooks/useTypingEffect';
 
 const Hero: React.FC = () => {

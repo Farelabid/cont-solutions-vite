@@ -9,9 +9,7 @@ import {
   Phone,
   MapPin,
   Heart,
-  Code,
   Coffee,
-  ExternalLink
 } from 'lucide-react';
 import { contactInfo, companyInfo } from '@/data';
 
